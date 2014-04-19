@@ -9,7 +9,7 @@ var nlog = nlog || {};
  * @param errorCallback
  */
 function command(successCallback, errorCallback, params) {
-  	exec(successCallback, errorCallback, 'NLog', 'command', [params]);
+  	exec(successCallback, errorCallback, 'NLogLauncher', 'command', [params]);
 };
 
 /**
@@ -18,7 +18,7 @@ function command(successCallback, errorCallback, params) {
  * @param errorCallback
  */
 function init(successCallback, errorCallback) {
-	exec(successCallback, errorCallback, 'NLog', 'init', []);
+	exec(successCallback, errorCallback, 'NLogLauncher', 'init', []);
 };
 
 nlog.command = command;

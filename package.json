@@ -1,7 +1,7 @@
 {
     "version": "0.1.0",
     "name": "com.baidu.light.nlog",
-    "cordova_name": "Flashlight",
+    "cordova_name": "NLog",
     "description": "Cordova NLog Plugin",
     "license": "Apache 2.0",
     "repo": "https://github.com/zswang/light-nlog.git",
