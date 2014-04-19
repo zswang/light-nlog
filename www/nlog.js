@@ -5,20 +5,24 @@ var nlog = nlog || {};
 
 /**
  * 执行命令
- * @param successCallback
- * @param errorCallback
+ * @param{String} cmd 命令行
+ * @param{Object} params 参数
  */
-function command(successCallback, errorCallback, params) {
-  	exec(successCallback, errorCallback, 'NLogLauncher', 'command', [params]);
+function command(cmd, params) {
+  	exec(null, function () {
+  		
+  	}, 'NLog', 'command', [cmd, params]);
 };
 
 /**
  * 初始化
- * @param successCallback
- * @param errorCallback
+ * @param{Object} options 配置项
+ * @param{Function} callback 回调
  */
-function init(successCallback, errorCallback) {
-	exec(successCallback, errorCallback, 'NLogLauncher', 'init', []);
+function init(options, callback) {
+	exec(callback, function() {
+
+	}, 'NLog', 'init', [options]);
 };
 
 nlog.command = command;
