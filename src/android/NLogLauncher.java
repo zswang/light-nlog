@@ -1,4 +1,4 @@
-NLogativepackage com.baidu.light.flashlight;
+package com.baidu.light.nlog;
 
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaPlugin;
@@ -7,9 +7,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class NLogLauncher extends CordovaPlugin {
-	public static final String TAG = "Flashlight";
-
-	private Camera mCamera;
+	public static final String TAG = "NLogLauncher";
 
 	/**
 	 * Executes the request and returns PluginResult.

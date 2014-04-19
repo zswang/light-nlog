@@ -1,4 +1,4 @@
-package com.baidu.common.nlog;
+package com.baidu.nlog;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
@@ -21,7 +21,6 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.zip.CRC32;
 import java.util.zip.GZIPOutputStream;
 import java.net.Proxy;
 import android.annotation.SuppressLint;
