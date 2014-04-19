@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
+      id="com.baidu.light.nlog"
+      version="0.1.0">
+    <name>NLog</name>
+    <description>Cordova NLog Plugin</description>
+    <license>Apache 2.0</license>
+    <keywords>cordova,battery</keywords>
+    <repo>https://github.com/zswang/light-nlog.git</repo>
+    <issue>https://github.com/zswang/light-nlog/issue</issue>
+
+    <js-module src="www/nlog.js" name="nlog">
+        <clobbers target="light.nlog" />
+    </js-module>
+    
+    <!-- android -->
+    <platform name="android">
+        <config-file target="res/xml/config.xml" parent="/*">
+            <feature name="NLog" >
+                <param name="android-package" value="com.baidu.light.nlog.NLogLauncher"/>
+            </feature>
+        </config-file>
+        
+        <config-file target="AndroidManifest.xml" parent="/*">
+            <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+            <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+            <uses-permission android:name="android.permission.INTERNET" />
+        </config-file>
+
+        <source-file src="src/android/NLogLauncher.java" target-dir="src/com/baidu/light/nlog" />
+        <source-file src="src/android/NLog.java" target-dir="src/com/baidu/nlog" />
+        <source-file src="src/android/NStorage.java" target-dir="src/com/baidu/nlog" />
+        <source-file src="src/android/NTracker.java" target-dir="src/com/baidu/nlog" />
+    </platform>
+
+</plugin>
