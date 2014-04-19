@@ -21,31 +21,42 @@ public class NLogLauncher extends CordovaPlugin {
 
 	private CallbackContext mNLogCallbackContext = null;
 
-	private Object[] json2Array(JSONObject json, int offset) {
-		return null;
-	}
-	private Object[] json2Array(JSONObject json) {
-		return json2Array(json, 0);
-	}
-
-	private Object[] json2Array(JSONArray json, int offset) {
-		ArrayList<Object> list = new ArrayList<Object>();
-		for (int i = offset; i < json.length(); i++) {
-			JSONObject a = json.optJSONObject(i);
-			JSONArray b = json.optJSONArray(i);
-			if (a != null) {
-				list.add(json2Array(a));
-			} else if (b != null) {
-				list.add(json2Array(b));
+	@SuppressWarnings("rawtypes")
+	private void json2Array(JSONObject json, ArrayList<Object> list) {
+		Iterator it = json.keys();
+		while (it.hasNext()) {
+			String key = (String) it.next();
+			Object o = json.opt(key);
+			list.add(key);
+			if (json.isNull(key)) {
+				list.add(null);
+			} else if (o instanceof JSONObject) {
+				list.add(json2Map(json.optJSONObject(key)));
+			} else if (o instanceof JSONArray) {
+				jarr2Array(json.optJSONArray(key), list, 0);
+			} else if (o instanceof Boolean) {
+				list.add(json.optBoolean(key));
 			} else {
-				list.add(json.optString(i));
+				list.add(o);
 			}
 		}
-		
-		return list.toArray();
 	}
-	private Object[] json2Array(JSONArray json) {
-		return json2Array(json, 0);
+
+	private void jarr2Array(JSONArray jarr, ArrayList<Object> list, int offset) {
+		for (int i = offset; i < jarr.length(); i++) {
+			Object o = jarr.opt(i);
+			if (jarr.isNull(i)) {
+				list.add(null);
+			} else if (o instanceof JSONObject) {
+				json2Array(jarr.optJSONObject(i), list);
+			} else if (o instanceof JSONArray) {
+				jarr2Array(jarr.optJSONArray(i), list, 0);
+			} else if (o instanceof Boolean) {
+				list.add(jarr.optBoolean(i));
+			} else {
+				list.add(o);
+			}
+		}
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -59,8 +70,6 @@ public class NLogLauncher extends CordovaPlugin {
 				result.put(key, null);
 			} else if (o instanceof JSONObject) {
 				result.put(key, json2Map(json.optJSONObject(key)));
-			} else if (o instanceof JSONArray) {
-				result.put(key, json2Array(json.optJSONArray(key)));
 			} else if (o instanceof Boolean) {
 				result.put(key, json.optBoolean(key));
 			} else {
@@ -69,16 +78,16 @@ public class NLogLauncher extends CordovaPlugin {
 		}
 		return result;
 	}
-	
+
 	private JSONObject map2Json(Map<String, Object> params) {
 		JSONObject result = new JSONObject();
-        for (String key : params.keySet()) {
-            Object item = params.get(key);
-        	try {
+		for (String key : params.keySet()) {
+			Object item = params.get(key);
+			try {
 				result.putOpt(key, item);
 			} catch (JSONException e) {
 			}
-        }
+		}
 		return result;
 	}
 
@@ -144,7 +153,9 @@ public class NLogLauncher extends CordovaPlugin {
 				callbackContext.error("Can't repeat initialization.");
 				return true;
 			}
-			NLog.cmd(args.optString(0, ""), json2Array(args, 1));
+			ArrayList<Object> list = new ArrayList<Object>();
+			jarr2Array(args, list, 1);
+			NLog.cmd(args.optString(0, ""), list.toArray());
 		}
 		return true;
 	}
