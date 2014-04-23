@@ -6,13 +6,16 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.apache.cordova.CallbackContext;
+import org.apache.cordova.CordovaInterface;
 import org.apache.cordova.CordovaPlugin;
+import org.apache.cordova.CordovaWebView;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.baidu.nlog.NLog;
 
+import android.content.Context;
 import android.util.Log;
 
 public class NLogLauncher extends CordovaPlugin {
@@ -20,6 +23,8 @@ public class NLogLauncher extends CordovaPlugin {
 	private static final boolean DEBUG = true;
 
 	private CallbackContext mNLogCallbackContext = null;
+	private Context mContext;
+	private boolean mResumed = true;
 
 	@SuppressWarnings("rawtypes")
 	private void json2Array(JSONObject json, ArrayList<Object> list) {
@@ -118,7 +123,7 @@ public class NLogLauncher extends CordovaPlugin {
 								public void onHandler(Map<String, Object> map) {
 									JSONObject result = new JSONObject();
 									try {
-										result.put("event", "onCreateSession");
+										result.put("event", "createSession");
 										result.put("param", map2Json(map));
 									} catch (JSONException e) {
 									}
@@ -129,7 +134,7 @@ public class NLogLauncher extends CordovaPlugin {
 								public void onHandler(Map<String, Object> map) {
 									JSONObject result = new JSONObject();
 									try {
-										result.put("event", "onDestorySession");
+										result.put("event", "destorySession");
 										result.put("param", map2Json(map));
 									} catch (JSONException e) {
 									}
@@ -140,14 +145,16 @@ public class NLogLauncher extends CordovaPlugin {
 								public void onHandler(Map<String, Object> map) {
 									JSONObject result = new JSONObject();
 									try {
-										result.put("event", "onUpgrade");
+										result.put("event", "upgrade");
 										result.put("param", map2Json(map));
 									} catch (JSONException e) {
 									}
 									mNLogCallbackContext.success(result);
 								}
 							}), json2Map(args.optJSONObject(0))));
-
+			if (mResumed) {
+				NLog.onResume(mContext); // 插件加载之前已经是 resumen 状态
+			}
 		} else if ("command".equals(action)) {
 			if (!NLog.getInitCompleted()) { // 未初始化
 				callbackContext.error("Can't repeat initialization.");
@@ -166,7 +173,9 @@ public class NLogLauncher extends CordovaPlugin {
 	 * @param multitasking		Flag indicating if multitasking is turned on for app
 	 */
 	public void onPause(boolean multitasking) {
+		super.onPause(multitasking);
 		NLog.onPause(webView.getContext());
+		mResumed = false;
 	}
 
 	/**
@@ -175,13 +184,25 @@ public class NLogLauncher extends CordovaPlugin {
 	 * @param multitasking		Flag indicating if multitasking is turned on for app
 	 */
 	public void onResume(boolean multitasking) {
-		NLog.onResume(webView.getContext());
+		super.onResume(multitasking);
+		NLog.onResume(mContext);
+		mResumed = true;
 	}
+	
+    /**
+     * @param cordova The context of the main Activity.
+     * @param webView The associated CordovaWebView.
+     */
+    public void initialize(CordovaInterface cordova, CordovaWebView webView) {
+    	super.initialize(cordova, webView);
+    	mContext = webView.getContext();
+    }
 
 	/**
 	 * The final call you receive before your activity is destroyed.
 	 */
 	public void onDestroy() {
+		super.onDestroy();
 		NLog.exit();
 	}
 }

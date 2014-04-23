@@ -11,7 +11,7 @@ var nlog = nlog || {};
 function command(cmd, params) {
   	exec(null, function () {
   		
-  	}, 'NLog', 'command', [cmd, params]);
+  	}, 'NLog', 'command', Array.prototype.slice.apply(arguments));
 };
 
 /**
